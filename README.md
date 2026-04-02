@@ -1,42 +1,36 @@
-# sv
+# Jumbotron
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Welcome to Jumbotron! Jumbotron is a SvelteKit site that can be used for Hack Club Satellite events to display scheduled events, announcements, presentations, and more. It also includes a live share feature that allows participants to follow along with what's on the big screen through their own devices. The current stage of the project is a demonstration of the core functionalities, as specific theming hasn't been released for V5 and proper beta testing couldn't be completed in the time-frame. Extensive future updates are planned.
 
-## Creating a project
+If you aren't familiar with Hack Club, nor Hack Club Satellite events, check out hackclub.com and campfire.hackclub.com!
 
-If you're seeing this, you've probably already done this step. Congrats!
+## How Jumbotron was made
 
-```sh
-# create a new project
-npx sv create my-app
-```
+Jumbotron is a static SvelteKit project that works through a web browser
 
-To recreate this project with the same configuration:
+## How to use Jumbotron 
 
-```sh
-# recreate this project
-npx sv@0.12.5 create --template minimal --no-types --add sveltekit-adapter="adapter:static" --install npm ./
-```
+Jumbotron is available at hacklyn.city/jumbotron; we recommend that Chrome is used on a laptop for Jumbotron. Liveshare should work for participants on most devices.
 
-## Developing
+How you'll proceed depends on what you're testing. If you want to test Liveshare from a participant perspective, choose the 2nd branch.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Organizer Console and Projection
 
-```sh
-npm run dev
+From the main page, you should choose the "Control Window" link. If you don't understand certain features, toggle the "Show Tutorial" button to enable explanations. If you wish to change the city/event-name, you can modify the name in the link. 
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+Example: <i>hacklyn.city/jumbotron/leafyland/control</i> -> <i>hacklyn.cityjumbotron/nyc/control</i>
 
-## Building
+The event that you input must have been an existing Campfire event.
 
-To create a production version of your app:
+### Participant Liveshare
 
-```sh
-npm run build
-```
+From the main page, you should choose the "Liveshare" link. From here, you will be prompted for a 5-digit code. Unless a Control Window is already setup, you may need to create your own (To do this, follow the steps above for Organizer Console in another tab or window). At the bottom of the Organizer Console, the option to enable Liveshare and copy the 5-digit code can be found. 
 
-You can preview the production build with `npm run preview`.
+Once setup, the participant device will listen for new changes on the Jumbotron. These include the following at the current stage of development:
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- Events, without countdowns
+- Announcements
+- Displayed PDFs and Presentations (button with a link will be provided)
+
+
+

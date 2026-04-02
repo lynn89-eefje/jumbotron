@@ -35,16 +35,18 @@
         setInterval(() => {
             alerts = [];
             let missingIPs = 0;
-            let notMatchingIPs = 0;
+            let notMatchingIPs = 0; // This doesn't work very well right now
             for (let i = 0; i < activeConnections.length; i++) {
                 if (activeConnections[i].ip == null) {
                     missingIPs++;
                 }
+                /*
                 else if (activeConnections[i].ip != localIP) {
                     notMatchingIPs++;
                     console.clear();
                     console.log("This IP Address on the Liveshare doesn't match", activeConnections[i].ip)
                 }
+                    */
             }
 
             if (missingIPs > 0) {

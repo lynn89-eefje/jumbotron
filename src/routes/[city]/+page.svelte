@@ -49,6 +49,7 @@
                     "ip": ip
                 })
                 mode = 1;
+                window.scrollTo({top: 0, behavior: "smooth"});
             })
             dataConnection.on("close", () => {
                 //clearInterval(pong);

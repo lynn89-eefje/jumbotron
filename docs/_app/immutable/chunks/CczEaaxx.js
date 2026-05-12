@@ -1,1 +1,0 @@
-import{p as r}from"./ZForDk54.js";import{s as t}from"./prbHjIIf.js";const e={get error(){return r.error},get params(){return r.params},get status(){return r.status}};t.updated.check;const p=e;export{p};

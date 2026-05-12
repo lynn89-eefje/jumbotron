@@ -137,6 +137,7 @@
 <h1>{proccessEventCity(page.params.city)}</h1>
 <h2 style:font-size=20px style:font-weight=400 style:margin-bottom=30px>Jumbotron Control Panel</h2>
 <p>You should keep this window open on your laptop or main screen, and open the display window on another screen.</p>
+<p>Jumbotron will not work across different browsers (ie. Safari, Chrome)</p>
 <p style:margin-bottom=40px><button onclick={toggleTut}>{#if tutorial.enabled}Hide Tutorial{:else}Show Tutorial{/if}</button></p>
 <div id="main" class="config">
     <h3>Main Configuration</h3>

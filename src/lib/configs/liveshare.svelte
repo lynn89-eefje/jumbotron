@@ -1,4 +1,4 @@
-<script>
+<!--<script>
     import { base } from "$app/paths";
     import { page } from "$app/state";
     import { onMount } from "svelte";
@@ -269,4 +269,8 @@
         {/if}
         {/if}
 
+</div>-->
+
+<div>
+    <p>This feature does not currently work.</p>
 </div>

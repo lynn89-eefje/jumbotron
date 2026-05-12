@@ -33,16 +33,17 @@
     let event = $state([]);
     let announcement = $state([]);
     let presentation = $state("");
+    let presentationType = $state();
 
     onMount(() => {
         window.addEventListener("storage", (e) => {
             sync();
         })
-        setTimeout(sync, 1000);
+        setTimeout(function() {sync(true)}, 1000);
     })
 
-    function sync() {
-        if (localStorage.getItem("jumbotron.sync") == "true") {
+    function sync(override) {
+        if (localStorage.getItem("jumbotron.sync") == "true" || override) {
             console.log("Started display sync");
             if (localStorage.getItem("jumbotron.event.title") == "" || localStorage.getItem("jumbotron.event.time") == "undefined" || localStorage.getItem("jumbotron.event.time") == "") {
                 event = [];
@@ -53,24 +54,29 @@
                 console.log("Synced event");
             }
             
-            if (localStorage.getItem("jumbotron.announcement.title") == "" || localStorage.getItem("jumbotron.announcement.message") == "") {
-                announcement = [];
-                console.log("Cleared announcement");
+            if (localStorage.getItem("jumbotron.announcement.title") == "" && localStorage.getItem("jumbotron.announcement.message") == "") {
+                announcementOut = true;
+                setTimeout(() => {announcement = [];
+                console.log("Cleared announcement");}, 1000)
             }
             else {
+                announcementOut = false;
                 announcement = [localStorage.getItem("jumbotron.announcement.title"), localStorage.getItem("jumbotron.announcement.message")]
                 console.log("Synced announcement");
             }
 
-            if (localStorage.getItem("jumbotron.googleLink") == "" && localStorage.getItem("jumbotron.fileLink") == "") {
+            if (localStorage.getItem("jumbotron.ytLink") == "" && localStorage.getItem("jumbotron.fileLink") == "") {
                 presentation = "";
+                presentationType = 0;
                 console.log("Cleared presentation");
             }
-            else if (localStorage.getItem("jumbotron.googleLink") != "") {
-                presentation = localStorage.getItem("jumbotron.googleLink");
+            else if (localStorage.getItem("jumbotron.ytLink") != "") {
+                presentationType = 1;
+                presentation = localStorage.getItem("jumbotron.ytLink");
                 //setTimeout(() => {document.getElementById("presentation").requestFullscreen();}, 100)
             }
             else {
+                presentationType = 2;
                 presentation = localStorage.getItem("jumbotron.fileLink");
             }
         }
@@ -110,6 +116,8 @@
         document.addEventListener('visibilitychange', handleVisibilityChange);
         return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
     });
+
+    let announcementOut = $state(true);
 </script>
 <style>
     #event {
@@ -168,6 +176,10 @@
                 font-size: 20px;
             }
         }
+
+        .margin-down {
+            margin-bottom: 40px;
+        }
     }
     #announcement-smoke {
         position: fixed;
@@ -213,18 +225,24 @@
     <p><strong>{event[0]}</strong> <span id="timeLabel">{event[1]}</span></p>
 </div>
 {/if}
-{#if announcement.length > 0}
+{#if announcementOut == false}
 <div id="announcement-smoke" in:fade out:fade={{delay: 1000}}></div>
 <div id="announcement" in:fly={{y:400, duration:1500, delay: 1000}} out:fly={{y:400, duration:1500}}>
-    <h1>{announcement[0]}</h1>
+    {#if announcement[0] != ""}<h1 class:margin-down={announcement[1] == ""}>{announcement[0]}</h1>{/if}
     <!--<span class="material-symbols-outlined">circle_notifications</span>-->
+    {#if announcement[1] != ""}
     <div>
         <p>{announcement[1]}</p>
     </div>
+    {/if}
 </div>
 {/if}
 {#if presentation != ""}
-<iframe transition:blur id="presentation" src={presentation} width={screenX-10} height={screenY-10} title="Presentation"></iframe>
+{#if presentationType == 1}
+<iframe transition:blur id="presentation" width={screenX-10} height={screenY-10} src={presentation} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+{:else if presentationType == 2}
+<iframe id="presentation" src={presentation} width={screenX-10} height={screenY-10} title="Google Docs viewer"></iframe>
+{/if}
 {/if}
 <div id="eventNameDisplay">
     <h1><span>{eventName}</span><br>{proccessCity(page.params.city)}</h1>

@@ -44,10 +44,20 @@
     function update(type) {
         event.preventDefault();
         if (type == 0) {
-            syncAnnouncements(true, null);
+            if (announcementMessage == "" && announcementTitle == "") {
+                toggle(0);
+            }
+            else {
+                syncAnnouncements(true, null);
+            }
         }
         else if (type == 1) {
-            syncAnnouncements(null, true);
+            if (eventsTitle == "" || eventsTime == null) {
+                toggle(1);
+            }
+            else {
+                syncAnnouncements(null, true);
+            }
         }
     }
 
@@ -252,6 +262,9 @@
     button.disabled {
         cursor: progress;
     }
+    button.incomplete {
+        cursor: not-allowed
+    }
 
     button.option {
         background-color: white;
@@ -267,7 +280,7 @@
     <input required bind:value={announcementTitle} type = "text" placeholder="Title"><br>
     <input required bind:value={announcementMessage} class="bigInput" type="text" placeholder="Message">
     <br>
-    {#if !announcementOn}<button disabled={sync.announcements} onclick={function() {toggle(0);}} class:disabled={sync.announcements}>Display Announcement</button>{:else}<button disabled={sync.announcements} onclick={function() {toggle(0);}} class:disabled={sync.announcements}>Hide Announcement</button> <button disabled={sync.announcements} onclick={function() { update(0)}} class:disabled={sync.announcements}>Sync Announcement</button>{/if}
+    {#if !announcementOn}<button disabled={sync.announcements || (announcementMessage == "" && announcementTitle == "")} onclick={function() {toggle(0);}} class:disabled={sync.announcements} class:incomplete={announcementMessage == "" && announcementTitle == ""}>Display Announcement</button>{:else}<button disabled={sync.announcements} onclick={function() {toggle(0);}} class:disabled={sync.announcements}>Hide Announcement</button> <button disabled={sync.announcements} onclick={function() { update(0)}} class:disabled={sync.announcements}>Sync Announcement</button>{/if}
 </form>
 <h4>Scheduled Event</h4>
 {#if tutorial.enabled}<p>You can modify the upcoming event module by filling out the form fields below. The module will appear when you sync the display window while the form fields contain content, and will count down the time until your event when 30 minutes or less remain. The module will dissapear when you sync the display window and the form fields contain no content.</p>{/if}
@@ -280,8 +293,11 @@
     <button disabled={sync.announcements} class="option" onclick={switchFormat}>Displaying International Format</button>
     {/if}
     <br>
-    {#if !eventOn}<button disabled={sync.announcements} onclick={function() {toggle(1);}} class:disabled={sync.announcements}>Display Event</button>{:else}<button disabled={sync.announcements} onclick={function() {toggle(1);}} class:disabled={sync.announcements}>Hide Event</button> <button disabled={sync.announcements} onclick={function() { update(1)}} class:disabled={sync.announcements}>Sync Event</button>{/if}
+    {#if !eventOn}<button disabled={sync.announcements || (eventsTitle == "" || eventsTime == null)} onclick={function() {toggle(1);}} class:disabled={sync.announcements} class:incomplete={eventsTitle == "" || eventsTime == null}>Display Event</button>{:else}<button disabled={sync.announcements} onclick={function() {toggle(1);}} class:disabled={sync.announcements}>Hide Event</button> <button disabled={sync.announcements} onclick={function() { update(1)}} class:disabled={sync.announcements}>Sync Event</button>{/if}
 
 </form>
 {#if tutorial.enabled}<p>Time must be inputted in 24 hour format. International Format will display the time of your event in the 24 hour clock; AM/PM format will display the time of your event in the 12 hour clock. Clicking the button above toggles between formats.</p>{/if}
+
 <!--<p><button class:disabled={sync.announcements} onclick={syncAnnouncements} disabled={sync.announcements}>Sync Announcements and Events on Display Windows</button></p>-->
+
+

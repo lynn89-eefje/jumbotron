@@ -7,6 +7,8 @@
     import { sync } from "$lib/sync.svelte.js";
     import { tutorial } from "$lib/sync.svelte.js";
 
+    let consoleMode = $state(0);
+
     //let googleLink = $state("");
     let fileLink = $state("");
     let ytLink = $state("");
@@ -135,7 +137,7 @@
         }
     }
 
-    // This is an AI generated function
+    // This is an AI generated function; I still don't understand why my function didn't work while this does... but if it works it works
     function getYTID(url) {
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
         const match = url.match(regExp);

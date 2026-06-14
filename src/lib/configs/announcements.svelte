@@ -1,11 +1,13 @@
 <script>
     import { base } from "$app/paths";
     import { page } from "$app/state";
-    //import { onMount } from "svelte";
+    import { slide } from "svelte/transition";
 
     import { sync } from "$lib/sync.svelte.js";
     import { tutorial } from "$lib/sync.svelte.js";
     import { onMount } from "svelte";
+
+    let consoleMode = $state(0);
 
     let announcementTitle = $state("");
     let announcementMessage = $state("");
@@ -199,6 +201,7 @@
         }
         let split = eventsTime.split(":");
         let time = new Date();
+        /*
         if (time.getHours() > split[0]) {
             window.alert("If this event was intended to occur today, the time of this event has already passed. If this event is intended to occur tomorrow, you will need to sync again tomorrow in order for live updates to occur.");
             return
@@ -207,6 +210,7 @@
             window.alert("If this event was intended to occur today, the time of this event has already passed. If this event is intended to occur tomorrow, you will need to sync again tomorrow in order for live updates to occur.");
             return
         }
+            */
         let t1 = (split[0]*60 + parseInt(split[1])); // Event
         let t2 = (time.getHours()*60) + time.getMinutes(); // Current Time
         timerID = setInterval(() => {
@@ -273,30 +277,57 @@
     h4 {
         margin-top: 35px;
     }
-</style>
-<h4>Announcements</h4>
-{#if tutorial.enabled}<p>You can modify the announcement popup by filling out the form fields below. The popup will appear when you sync the display window while the form fields contain content, and the popup will dissapear when you sync the display window and the form fields contain no content.</p>{/if}
-<form>
-    <input required bind:value={announcementTitle} type = "text" placeholder="Title"><br>
-    <input required bind:value={announcementMessage} class="bigInput" type="text" placeholder="Message">
-    <br>
-    {#if !announcementOn}<button disabled={sync.announcements || (announcementMessage == "" && announcementTitle == "")} onclick={function() {toggle(0);}} class:disabled={sync.announcements} class:incomplete={announcementMessage == "" && announcementTitle == ""}>Display Announcement</button>{:else}<button disabled={sync.announcements} onclick={function() {toggle(0);}} class:disabled={sync.announcements}>Hide Announcement</button> <button disabled={sync.announcements} onclick={function() { update(0)}} class:disabled={sync.announcements}>Sync Announcement</button>{/if}
-</form>
-<h4>Scheduled Event</h4>
-{#if tutorial.enabled}<p>You can modify the upcoming event module by filling out the form fields below. The module will appear when you sync the display window while the form fields contain content, and will count down the time until your event when 30 minutes or less remain. The module will dissapear when you sync the display window and the form fields contain no content.</p>{/if}
-<form>
-    <input bind:value={eventsTitle} type="text" placeholder="Title">
-    <input bind:value={eventsTime} type="time" placeholder={placeholderTime}>
-    {#if formatLabel == "International"}
-    <button disabled={sync.announcements} class="option" onclick={switchFormat}>Displaying AM/PM Format</button>
-    {:else}
-    <button disabled={sync.announcements} class="option" onclick={switchFormat}>Displaying International Format</button>
-    {/if}
-    <br>
-    {#if !eventOn}<button disabled={sync.announcements || (eventsTitle == "" || eventsTime == null)} onclick={function() {toggle(1);}} class:disabled={sync.announcements} class:incomplete={eventsTitle == "" || eventsTime == null}>Display Event</button>{:else}<button disabled={sync.announcements} onclick={function() {toggle(1);}} class:disabled={sync.announcements}>Hide Event</button> <button disabled={sync.announcements} onclick={function() { update(1)}} class:disabled={sync.announcements}>Sync Event</button>{/if}
 
-</form>
-{#if tutorial.enabled}<p>Time must be inputted in 24 hour format. International Format will display the time of your event in the 24 hour clock; AM/PM format will display the time of your event in the 12 hour clock. Clicking the button above toggles between formats.</p>{/if}
+    .bigButton:active {
+        background-color: rgb(129, 129, 129);
+    }
+</style>
+<table style:margin-top=0px style:margin-bottom=5px>
+    <tbody>
+        <tr>
+            <td>
+                <p><button class="bigButton" title="Configure Announcement" onclick={() => {consoleMode = 1}}><span class="material-symbols-outlined">campaign</span></button><button class="bigButton" title="Configure Event" onclick={() => {consoleMode = 2}}><span class="material-symbols-outlined">calendar_add_on</span></button></p>
+            </td>
+        </tr>
+        {#if consoleMode == 1}
+        <tr>
+            <td>
+                <div in:slide={{delay: 1000}} out:slide>
+                    <h4>Announcements</h4>
+                    {#if tutorial.enabled}<p>You can modify the announcement popup by filling out the form fields below. The popup will appear when you sync the display window while the form fields contain content, and the popup will dissapear when you sync the display window and the form fields contain no content.</p>{/if}
+                    <form>
+                        <input required bind:value={announcementTitle} type = "text" placeholder="Title"><br>
+                        <input required bind:value={announcementMessage} class="bigInput" type="text" placeholder="Message">
+                        <br>
+                        {#if !announcementOn}<button disabled={sync.announcements || (announcementMessage == "" && announcementTitle == "")} onclick={function() {toggle(0);}} class:disabled={sync.announcements} class:incomplete={announcementMessage == "" && announcementTitle == ""}>Display Announcement</button>{:else}<button disabled={sync.announcements} onclick={function() {toggle(0);}} class:disabled={sync.announcements}>Hide Announcement</button> <button disabled={sync.announcements} onclick={function() { update(0)}} class:disabled={sync.announcements}>Sync Announcement</button>{/if}
+                    </form>
+                </div>
+            </td>
+        </tr>
+        {:else if consoleMode == 2}
+        <tr>
+            <td in:slide={{delay: 1000}} out:slide>
+                <div>
+                    <h4>Scheduled Event</h4>
+                    {#if tutorial.enabled}<p>You can modify the upcoming event module by filling out the form fields below. The module will appear when you sync the display window while the form fields contain content, and will count down the time until your event when 30 minutes or less remain. The module will dissapear when you sync the display window and the form fields contain no content.</p>{/if}
+                    <form>
+                        <input bind:value={eventsTitle} type="text" placeholder="Title">
+                        <input bind:value={eventsTime} type="time" placeholder={placeholderTime}>
+                        {#if formatLabel == "International"}
+                        <button disabled={sync.announcements} class="option" onclick={switchFormat}>Displaying AM/PM Format</button>
+                        {:else}
+                        <button disabled={sync.announcements} class="option" onclick={switchFormat}>Displaying International Format</button>
+                        {/if}
+                        <br>
+                        {#if !eventOn}<button disabled={sync.announcements || (eventsTitle == "" || eventsTime == null)} onclick={function() {toggle(1);}} class:disabled={sync.announcements} class:incomplete={eventsTitle == "" || eventsTime == null}>Display Event</button>{:else}<button disabled={sync.announcements} onclick={function() {toggle(1);}} class:disabled={sync.announcements}>Hide Event</button> <button disabled={sync.announcements} onclick={function() { update(1)}} class:disabled={sync.announcements}>Sync Event</button>{/if}
+                        <p>Time must be inputted in 24-hour format. International Format will display the time of your event in the 24-hour clock; AM/PM format will display the time of your event in the 12-hour clock.</p>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        {/if}
+    </tbody>
+</table>
 
 <!--<p><button class:disabled={sync.announcements} onclick={syncAnnouncements} disabled={sync.announcements}>Sync Announcements and Events on Display Windows</button></p>-->
 

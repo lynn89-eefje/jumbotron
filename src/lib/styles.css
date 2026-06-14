@@ -27,6 +27,32 @@ form {
   width: 80%;
 }
 
+button.bigButton {
+  padding: 15px;
+  font-size: 30px;
+  border-radius: 15px;
+  font-weight: 500px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border: 5px solid rgb(129, 129, 129);
+
+  span {
+    font-size: 30px;
+    user-select: none;
+  }
+}
+
+.key {
+  border-radius: 10px;
+  padding: 8px;
+  font-family: Montserrat;
+  font-weight: 800;
+  background-color: rgb(92, 89, 89);
+  color: white;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 @layer hack-club-theme {
   :root {
     --darker: #121217;

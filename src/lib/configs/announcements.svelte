@@ -283,17 +283,19 @@
     }
 </style>
 <table style:margin-top=0px style:margin-bottom=5px>
+<!--This was originally a table for a different format, but we don't need it-->
     <tbody>
         <tr>
             <td>
-                <p><button class="bigButton" title="Configure Announcement" onclick={() => {consoleMode = 1}}><span class="material-symbols-outlined">campaign</span></button><button class="bigButton" title="Configure Event" onclick={() => {consoleMode = 2}}><span class="material-symbols-outlined">calendar_add_on</span></button></p>
+                <p><button class="bigButton" title="Configure Announcement" onclick={() => {consoleMode == 1 ? consoleMode = 0 : consoleMode = 1}}><span translate="no" class="material-symbols-outlined">campaign</span></button><button class="bigButton" title="Configure Event" onclick={() => {consoleMode == 2 ? consoleMode = 0 : consoleMode = 2}}><span translate="no" class="material-symbols-outlined">calendar_add_on</span></button></p>
             </td>
         </tr>
         {#if consoleMode == 1}
         <tr>
             <td>
-                <div in:slide={{delay: 1000}} out:slide>
+                <div class="subconsole">
                     <h4>Announcements</h4>
+                    <p>One or both fields must contain content in order to display</p>
                     {#if tutorial.enabled}<p>You can modify the announcement popup by filling out the form fields below. The popup will appear when you sync the display window while the form fields contain content, and the popup will dissapear when you sync the display window and the form fields contain no content.</p>{/if}
                     <form>
                         <input required bind:value={announcementTitle} type = "text" placeholder="Title"><br>
@@ -306,9 +308,10 @@
         </tr>
         {:else if consoleMode == 2}
         <tr>
-            <td in:slide={{delay: 1000}} out:slide>
-                <div>
+            <td>
+                <div class="subconsole">
                     <h4>Scheduled Event</h4>
+                    <p>Time must be inputted in 24-hour format. International Format will display the time of your event in the 24-hour clock; AM/PM format will display the time of your event in the 12-hour clock.</p>
                     {#if tutorial.enabled}<p>You can modify the upcoming event module by filling out the form fields below. The module will appear when you sync the display window while the form fields contain content, and will count down the time until your event when 30 minutes or less remain. The module will dissapear when you sync the display window and the form fields contain no content.</p>{/if}
                     <form>
                         <input bind:value={eventsTitle} type="text" placeholder="Title">
@@ -320,7 +323,6 @@
                         {/if}
                         <br>
                         {#if !eventOn}<button disabled={sync.announcements || (eventsTitle == "" || eventsTime == null)} onclick={function() {toggle(1);}} class:disabled={sync.announcements} class:incomplete={eventsTitle == "" || eventsTime == null}>Display Event</button>{:else}<button disabled={sync.announcements} onclick={function() {toggle(1);}} class:disabled={sync.announcements}>Hide Event</button> <button disabled={sync.announcements} onclick={function() { update(1)}} class:disabled={sync.announcements}>Sync Event</button>{/if}
-                        <p>Time must be inputted in 24-hour format. International Format will display the time of your event in the 24-hour clock; AM/PM format will display the time of your event in the 12-hour clock.</p>
                     </form>
                 </div>
             </td>

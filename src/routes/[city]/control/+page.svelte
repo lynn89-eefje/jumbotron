@@ -14,6 +14,20 @@
     import Liveshare from "$lib/configs/liveshare.svelte";
     import { sync, tutorial } from "$lib/sync.svelte";
 
+    let liveshareEnabled = $state(false);
+    onMount(function() {
+        let params = new URLSearchParams(window.location.search);
+        if (params.get("liveshare") == "true") {
+            liveshareEnabled = true;
+            if (sessionStorage.getItem("authCode") == null || sessionStorage.getItem("authCode") == "") {
+                window.location.href = base + "/?eventName=" + page.params.city;
+            }
+        }
+        else {
+            sessionStorage.removeItem("authCode");
+        }
+    })
+
     onMount(async function() {
         console.log("Checking city name...")
        if (await checkCity(proccessCity(page.params.city)) == true) {
@@ -138,23 +152,30 @@
 <h2 style:font-size=20px style:font-weight=400 style:margin-bottom=30px>Jumbotron Control Panel</h2>
 <p>You should keep this window open on your laptop or main screen, and open the display window on another screen.</p>
 <p>Jumbotron will not work across different browsers (ie. Safari, Chrome)</p>
-<p style:margin-bottom=40px><button onclick={toggleTut}>{#if tutorial.enabled}Hide Tutorial{:else}Show Tutorial{/if}</button></p>
+<!--<p style:margin-bottom=40px><button onclick={toggleTut}>{#if tutorial.enabled}Hide Tutorial{:else}Show Tutorial{/if}</button></p>-->
+<p style:margin-bottom=40px><button onclick={window.location.href = base + "/"}>Return to Landing Page</button></p>
+
 <div id="main" class="config">
     <h3>Main Configuration</h3>
+    <p>Manage and Create Display Windows</p>
     <MainConfig />
 </div>
 <div id="events" class="config">
     <h3>Announcements and Events</h3>
+    <p>Display real-time information easily</p>
     <AnnouncementConfig title=""/>
 </div>
 <div id="presentations" class="config">
     <h3>Presentations</h3>
+    <p>Display slides, documents, and videos</p>
     <Slides />
 </div>
+{#if liveshareEnabled}
 <div id="liveshare" class="config">
     <h3>Liveshare</h3>
     <Liveshare />
 </div>
+{/if}
 {#if false}
 <button id="sync" title="Sync Displays" onclick={forceSync}>
     <span class="material-symbols-outlined" class:spin={sync.enabled || sync.announcements || sync.slides}>sync</span>

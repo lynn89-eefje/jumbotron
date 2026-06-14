@@ -33,10 +33,9 @@
         background-color: rgb(92, 89, 89);
     }
 </style>
-<h4>Manage Display Windows</h4>
 {#if tutorial.enabled}<p>Display windows should be moved to another screen.</p>{/if}
 <!--<p><button onclick={openDisplay}>Open New Display Window</button></p>-->
-<p><button class="bigButton" title="Open Display Window" onclick={openDisplay}><span class="material-symbols-outlined">add_to_queue</span></button></p>
+<p><button class="bigButton" title="Open Display Window" onclick={openDisplay}><span translate="no" class="material-symbols-outlined">add_to_queue</span></button></p>
 {#if tutorial.enabled}<p>New windows are not automatically synced. Sync the windows using the buttons for each section below.</p>{/if}
-<p>To enter fullscreen on your display window, press <span class="key">f</span> key in the display.</p>
-<p>To exit fullscreen, press <span class="key">esc</span> key in the display.</p>
+<p>To enter fullscreen on your display window, press <span class="key">f key</span> in the display.</p>
+<p>To exit fullscreen, press <span class="key">esc key</span> in the display.</p> 

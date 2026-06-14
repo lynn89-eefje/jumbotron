@@ -253,7 +253,7 @@
         {:else}
         <p><button onclick={destroyLiveshare}>Disable Liveshare</button></p>
         <h4>Participant Code</h4>
-        <h5 style:font-size=30px>{peerInfo.code} <button onclick={copyCode} class="copy"><span translate="no" class="material-symbols-outlined">file_copy</span></button></h5>
+        <h5 style:font-size=30px>{peerInfo.code} <button onclick={copyCode} class="copy"><span translate="no" translate="no" class="material-symbols-outlined">file_copy</span></button></h5>
         {#if tutorial.enabled}<p>Participants should use this code to view information on their device; you might want to copy this code into an announcement. If your liveshare restarts, this code will likely change.</p>{/if}
         <h4>Monitor</h4>
         <p>IP Address: {localIP}</p>
@@ -270,7 +270,13 @@
         {/if}
 
 </div>-->
+<style>
+    button {
+        background-color: rgb(92, 89, 89);
+    }
+</style>
 
 <div>
-    <p>This feature does not currently work.</p>
+    <p>Enable and Manage Liveshare</p>
+    <p><button class="bigButton" onclick={() => {alert("This feature does not currently exist")}}><span translate="no" title="Enable Liveshare" class="material-symbols-outlined">cast</span></button></p>
 </div>

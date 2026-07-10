@@ -7,6 +7,9 @@
     import { tutorial } from "$lib/sync.svelte.js";
     import { onMount } from "svelte";
 
+    import { liveshareData, updateAPI } from "$lib/liveshare.svelte.js"
+
+
     let consoleMode = $state(0);
 
     let announcementTitle = $state("");
@@ -27,17 +30,31 @@
         if (type == 0) {
             if (announcementOn) {
                 announcementOn = false;
+                liveshareData.announcement = null;
+                //updateAPI();
             }
             else {
                 announcementOn = true;
+                liveshareData.announcement = {
+                    title: announcementTitle,
+                    message: announcementMessage
+                }
+                //updateAPI();
             }
         }
         else if (type == 1) {
             if (eventOn) {
                 eventOn = false;
+                liveshareData.event = null;
+                //updateAPI();
             }
             else {
                 eventOn = true;
+                liveshareData.event = {
+                    title: eventsTitle,
+                    time: formatTimeLabel(eventsTime)
+                }
+                //updateAPI();
             }
         }
         syncAnnouncements(announcementOn, eventOn);
@@ -175,24 +192,34 @@
         if (o1) {
             localStorage.setItem("jumbotron.announcement.title", announcementTitle);
             localStorage.setItem("jumbotron.announcement.message", announcementMessage);
+            liveshareData.announcement = {
+                    title: announcementTitle,
+                    message: announcementMessage
+                }
         }
         else if (o1 == false) {
             localStorage.setItem("jumbotron.announcement.title", "");
             localStorage.setItem("jumbotron.announcement.message", "");
+            liveshareData.announcement = null;
         }
         if (o2) {
             localStorage.setItem("jumbotron.event.title", eventsTitle);
             localStorage.setItem("jumbotron.event.time", eventsTime);
             localStorage.setItem("jumbotron.event.label", formatTimeLabel(eventsTime));
             setTimeout(setAlarm, 1000);
+            liveshareData.event = {
+                    title: eventsTitle,
+                    time: formatTimeLabel(eventsTime)
+                }
         }
         else if (o2 == false) {
             localStorage.setItem("jumbotron.event.title", "");
             localStorage.setItem("jumbotron.event.time", "");
             localStorage.setItem("jumbotron.event.label", "");
+            liveshareData.event = null;
         }
         setTimeout(function() {localStorage.setItem("jumbotron.sync", true); sync.liveshare = true;}, 2000);
-        setTimeout(function() {sync.announcements = false; localStorage.setItem("jumbotron.sync", false); sync.liveshare = false}, 3000);
+        setTimeout(function() {sync.announcements = false; localStorage.setItem("jumbotron.sync", false); sync.liveshare = false; updateAPI();}, 3000);
     }
 
     function setAlarm() {
@@ -246,7 +273,7 @@
         let raw = await fetch(`https://ip.hackclub.com/ip/${ipReadable.ip}`);
         let details = await raw.json();
         if (details.country_name == "United States" || details.country_name == "Canada" || details.country_name == "Australia" || details.country_name == "New Zealand") {
-            formatLabel = "International";
+            formatLabel = "International"; // Inversed
         }
     })
     
@@ -277,17 +304,13 @@
     h4 {
         margin-top: 35px;
     }
-
-    .bigButton:active {
-        background-color: rgb(129, 129, 129);
-    }
 </style>
 <table style:margin-top=0px style:margin-bottom=5px>
 <!--This was originally a table for a different format, but we don't need it-->
     <tbody>
         <tr>
             <td>
-                <p><button class="bigButton" title="Configure Announcement" onclick={() => {consoleMode == 1 ? consoleMode = 0 : consoleMode = 1}}><span translate="no" class="material-symbols-outlined">campaign</span></button><button class="bigButton" title="Configure Event" onclick={() => {consoleMode == 2 ? consoleMode = 0 : consoleMode = 2}}><span translate="no" class="material-symbols-outlined">calendar_add_on</span></button></p>
+                <p><button class="bigButton" class:toggleOn={consoleMode == 1} title="Configure Announcement" onclick={() => {consoleMode == 1 ? consoleMode = 0 : consoleMode = 1}}><span translate="no" class="material-symbols-outlined">campaign</span></button><button class="bigButton" class:toggleOn={consoleMode == 2} title="Configure Event" onclick={() => {consoleMode == 2 ? consoleMode = 0 : consoleMode = 2}}><span translate="no" class="material-symbols-outlined">calendar_add_on</span></button></p>
             </td>
         </tr>
         {#if consoleMode == 1}

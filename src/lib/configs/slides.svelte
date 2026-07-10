@@ -6,6 +6,7 @@
 
     import { sync } from "$lib/sync.svelte.js";
     import { tutorial } from "$lib/sync.svelte.js";
+    import { liveshareData, updateAPI } from "$lib/liveshare.svelte.js"
 
     let consoleMode = $state(0);
 
@@ -76,8 +77,9 @@
         }
         localStorage.setItem("jumbotron.fileLink", link);
         setTimeout(function() {localStorage.setItem("jumbotron.sync", true); sync.liveshare = true; mountedEnabled = true;}, 2000);
-        setTimeout(function() {sync.slides = false; localStorage.setItem("jumbotron.sync", false); sync.liveshare = false; document.getElementById("file").disabled = false; mountedEnabled = true;}, 3000)
-        setTimeout(() => {checkLink(fileLink, "file")}, 3500);
+        setTimeout(function() {sync.slides = false; localStorage.setItem("jumbotron.sync", false); sync.liveshare = false; document.getElementById("file").disabled = false; mountedEnabled = true;}, 3000);
+        liveshareData.presentation = link;
+        updateAPI();
     }
 
     function enableYoutube() {
@@ -87,7 +89,10 @@
         let link = `https://www.youtube.com/embed/${getYTID(ytLink)}`
         localStorage.setItem("jumbotron.ytLink", link);
         setTimeout(function() {localStorage.setItem("jumbotron.sync", true); sync.liveshare = true; mountedEnabled = true;}, 2000);
-        setTimeout(function() {sync.slides = false; localStorage.setItem("jumbotron.sync", false); sync.liveshare = false; document.getElementById("file").disabled = false; mountedEnabled = true;}, 3000)
+        setTimeout(function() {sync.slides = false; localStorage.setItem("jumbotron.sync", false); sync.liveshare = false; document.getElementById("file").disabled = false; mountedEnabled = true;}, 3000);
+        liveshareData.presentation = ytLink;
+        //console.log(ytLink);
+        updateAPI();
     }
 
     function unmountDisplay() {
@@ -97,7 +102,9 @@
         localStorage.setItem("jumbotron.ytLink", "");
         mountedEnabled = false;
         setTimeout(function() {localStorage.setItem("jumbotron.sync", true); sync.liveshare = true; mountedEnabled = false;}, 2000);
-        setTimeout(function() {localStorage.setItem("jumbotron.sync", false); sync.slides = false; sync.liveshare = false;}, 3000)
+        setTimeout(function() {localStorage.setItem("jumbotron.sync", false); sync.slides = false; sync.liveshare = false;}, 3000);
+        liveshareData.presentation = null;
+        updateAPI();
     }
 
     async function checkLink(link, type) {
@@ -165,13 +172,10 @@
     h4 {
         margin-top: 35px;
     }
-    .bigButton:active {
-        background-color: rgb(129, 129, 129);
-    }
 </style>
 {#if !mountedEnabled}
 <div transition:slide>
-    <p><button class="bigButton" onclick={() => {consoleMode == 1 ? consoleMode = 0 : consoleMode = 1}}><span class="material-symbols-outlined" title="Display Google Drive File" translate="no">drive_export</span></button> <button class="bigButton" onclick={() => {consoleMode == 2 ? consoleMode = 0 : consoleMode = 2}}><span class="material-symbols-outlined" title="Display YouTube Video" translate="no">video_library</span></button></p>
+    <p><button class="bigButton" class:toggleOn={consoleMode == 1} onclick={() => {consoleMode == 1 ? consoleMode = 0 : consoleMode = 1}}><span class="material-symbols-outlined" title="Display Google Drive File" translate="no">drive_export</span></button> <button class="bigButton" class:toggleOn={consoleMode == 2} onclick={() => {consoleMode == 2 ? consoleMode = 0 : consoleMode = 2}}><span class="material-symbols-outlined" title="Display YouTube Video" translate="no">video_library</span></button></p>
 <!--
     <h4>Google Slides</h4>
     {#if tutorial.enabled}<p>To display a Google Slides Presentation on your display windows, go to your Google Slides Presentation, find <i>Publish to Web</i>, choose Embed, copy and then paste the provided link below. You can also copy the entire embed given by Google.</p>{/if}

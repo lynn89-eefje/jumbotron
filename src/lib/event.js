@@ -1,4 +1,4 @@
-export let eventName = "Campfire" // Used to change the name of the Satellite event across Jumbotron and to make updating the UI between events easier
+export let eventName = "Sunbeam" // Used to change the name of the Satellite event across Jumbotron and to make updating the UI between events easier
 
 export function proccessCity(name) {
     name = name.trim();
@@ -7,9 +7,6 @@ export function proccessCity(name) {
     }
     else if (name == "dallas-fort-worth" || name=="dfw") {
         return "Dallas-Fort Worth";
-    }
-    else if (name == "hanoi") {
-        return "Hà Nội"
     }
     // Additional special cases can follow; however, I don't think there are others
     else {
@@ -38,12 +35,20 @@ export function proccessEventCity(name) {
 }
 
 export async function checkCity(name) {
-    let rawData = await fetch("https://raw.githubusercontent.com/lynn89-eefje/jumbotron-events/refs/heads/main/data.json");
-    let data = await rawData.json();
-    for (let i = 0; i < data.length; i++) {
-        if (data[i].eventName == name) {
-            return true;
-        }
+    let rawData = await fetch(`https://jumbotron.lynn89sudo.hackclub.app/data?eventName=${proccessCity(name)}`);
+    if (!rawData.ok) {
+        console.log("Failed")
+        return false;
     }
-    return false;
+    return true;
+}
+
+export function cityToLink(city) {
+    if (city == "Dallas-Fort Worth") {
+        return "dfw";
+    }
+    else {
+        return city.substring(0,1).toLowerCase() + city.substring(1)
+        //return (city.substring(1).toLowerCase()) + city.substring(2, city.length);
+    }
 }

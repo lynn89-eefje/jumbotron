@@ -14,12 +14,17 @@
     import Liveshare from "$lib/configs/liveshare.svelte";
     import { sync, tutorial } from "$lib/sync.svelte";
 
+    import { openGate } from "$lib/liveshare.svelte.js";
+
     let liveshareEnabled = $state(false);
+    let liveshareAway = $state(false);
     onMount(function() {
         let params = new URLSearchParams(window.location.search);
         if (params.get("liveshare") == "true") {
             liveshareEnabled = true;
-            if (sessionStorage.getItem("authCode") == null || sessionStorage.getItem("authCode") == "") {
+            setTimeout(() => {liveshareAway = true}, 1000);
+            setTimeout(() => {liveshareAway = false}, 3500);
+            if (sessionStorage.getItem("liveshareKey") == null || sessionStorage.getItem("liveshareKey") == "" || sessionStorage.getItem("liveshareEmail") == null || sessionStorage.getItem("liveshareEmail") == "") {
                 window.location.href = base + "/?eventName=" + page.params.city;
             }
         }
@@ -105,6 +110,99 @@
         }
         
     }
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        50% {
+            transform: rotate(180deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    #liveshareNotif {
+        user-select: none;
+        z-index: 1000;
+        position: fixed;
+        right: -305px;
+        top: 90px;
+        background-color: #635758f2;
+        border-radius: 20px;
+        color: white;
+        padding: 0px;
+        transition: all 0.5s ease-in-out;
+        border: 5px solid #ec374f00;
+
+        span {
+            transform: translateY(5px);
+            margin-right: 20px;
+        }
+        p {
+            transform: translateY(-3px);
+            padding-right: 50px;
+        }
+    }
+    #liveshareNotif.away {
+        right: -25px;
+        background-color: #ec374ff2;
+    }
+    #liveshareNotif.active {
+        right: -235px;
+        animation: pulsate infinite 2s ease-in-out;
+    }
+    #liveshareNotif.pause {
+        right: -235px;
+        background-color: #635758f2;
+    }
+    #liveshareNotif.up {
+        top: 10px;  
+    }
+    @keyframes pulsate {
+        0%, 100% {
+            background-color: #db5164fd;
+        }
+        50% {
+            background-color: #ec374f;
+        }
+    }
+
+    #syncingNotif {
+        z-index: 999;
+        user-select: none;
+        position: fixed;
+        right: -200px;
+        top: 10px;
+        background-color: #635758f2;
+        border-radius: 20px;
+        color: white;
+        padding: 0px;
+        transition: all 0.5s ease-in-out;
+        border: 5px solid #ec374f00;
+
+        span {
+            transform: translateY(5px);
+            margin-right: 20px;
+        }
+        p {
+            transform: translateY(-3px);
+            padding-right: 50px;
+        }
+    }
+    #syncingNotif.active {
+        animation: pulsate infinite 2s ease-in-out;
+        right: -70px;
+        background-color: #ec374ff2;
+        span {
+            animation: spin 1s infinite ease-in;
+        }
+        p {
+            transform: translateY(2.5px);
+        }
+    }
+</style>
+<!--
     #syncingNotif {
         position: fixed;
         z-index: 1000;
@@ -123,33 +221,10 @@
     #syncingNotif.active {
         bottom: 10px;
     }
-
-    #sync {
-        position: fixed;
-        top: 10px;
-        right: 25px;
-    }
-
-    .spin {
-        animation: spin 0.6s ease-in-out infinite;
-    }
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg)
-        }
-        50% {
-            transform: rotate(180deg)
-        }
-        100% {
-            transform: rotate(360deg)
-        }
-    }
-</style>
-<div id="syncingNotif" class:active={sync.enabled || sync.announcements || sync.slides}>
-    <p>Your display windows are syncing. Hang tight!</p>
-</div>
+-->
 <h1>{proccessEventCity(page.params.city)}</h1>
 <h2 style:font-size=20px style:font-weight=400 style:margin-bottom=30px>Jumbotron Control Panel</h2>
+<svg style="display: block; margin: 0 auto" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414" xmlns="http://www.w3.org/2000/svg" aria-label="admin" viewBox="0 0 32 32" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="100" height="100"><path d="M21.437 17.023a1 1 0 0 1 .785.977v2.2H23a1 1 0 0 1 .907 1.42l-2.222 4.8a1 1 0 0 1-1.907-.42v-2.2H19a1 1 0 0 1-.907-1.42l2.222-4.8a1 1 0 0 1 1.122-.557zM19.834 16.977C20.714 16.173 21 14.873 21 13a5 5 0 0 0-10 0c0 1.873.286 3.173 1.165 3.977a8.029 8.029 0 0 0-3.6 4.062c-.162.408-.213.939.162 1.168.792.485 1.632-.457 2.105-1.257a5.997 5.997 0 0 1 5.48-2.942c1.132.058 2.373-.055 3.24-.784a8.75 8.75 0 0 0 .282-.247zM19 13c0 1.683-.271 2.241-.47 2.456-.162.176-.68.544-2.53.544-1.85 0-2.368-.368-2.53-.544C13.27 15.24 13 14.683 13 13a3 3 0 1 1 6 0z"/></svg>
 <p>You should keep this window open on your laptop or main screen, and open the display window on another screen.</p>
 <p>Jumbotron will not work across different browsers (ie. Safari, Chrome)</p>
 <!--<p style:margin-bottom=40px><button onclick={toggleTut}>{#if tutorial.enabled}Hide Tutorial{:else}Show Tutorial{/if}</button></p>-->
@@ -176,8 +251,11 @@
     <Liveshare />
 </div>
 {/if}
-{#if false}
-<button id="sync" title="Sync Displays" onclick={forceSync}>
-    <span class="material-symbols-outlined" class:spin={sync.enabled || sync.announcements || sync.slides}>sync</span>
-</button>
+{#if liveshareEnabled}
+<div id="liveshareNotif" class:away={liveshareAway} class:active={openGate.isOpen} class:up={!sync.enabled && !sync.announcements && !sync.slides} class:pause={openGate.paused}>
+    <p style:color="white"><strong><span translate="no" class="material-symbols-outlined">podcasts</span> Liveshare Available</strong></p>
+</div>
 {/if}
+<div id="syncingNotif" class:active={sync.enabled || sync.announcements || sync.slides}>
+    <p style:color="white"><strong><span translate="no" class="material-symbols-outlined">sync</span></strong></p>
+</div>

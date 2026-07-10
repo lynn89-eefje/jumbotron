@@ -4,7 +4,7 @@ h1, h2, h3 {
     margin-left: 10px;
     margin-right: 10px;
 }
-h4, h5, h6, p {
+h4, h5, h6, p, output {
     font-family: Poppins, Montserrat, Segoe UI, Tahoma, Geneva, Futura, Calibri;
     text-align: center;
     margin-left: 10px; 
@@ -34,12 +34,20 @@ button.bigButton {
   font-weight: 500px;
   margin-left: 10px;
   margin-right: 10px;
-  border: 5px solid rgb(129, 129, 129);
+  border: 5px solid rgb(123, 123, 123);
 
   span {
     font-size: 30px;
     user-select: none;
   }
+}
+button.bigButton:active {
+  background-color: rgb(64, 64, 64);
+}
+button.bigButton.toggleOn {
+  background-color: rgb(64, 64, 64);
+  transform: scale(1.1);
+  border: rgb(64, 64, 64) 5px solid;
 }
 
 .key {

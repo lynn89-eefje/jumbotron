@@ -3,17 +3,67 @@
     import { eventName } from "$lib/event";
     import { page } from "$app/state";
     import { onMount } from "svelte";
-    import { checkCity, proccessCity } from "$lib/event";
+    import { checkCity, proccessCity, cityToLink } from "$lib/event";
 
     import { slide } from "svelte/transition";
 
     let city = $state("");
     let isValid = $state(null);
+
+    let liveshareError = $state(null);
     onMount(async () => {
         let urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get("code") != null) {
-            sessionStorage.setItem("authCode", urlParams.get("code"))
-            window.location.href = base + "/" + sessionStorage.getItem("refAuthCity") + "/control/?liveshare=true" 
+            let val = await fetch("https://jumbotron.lynn89sudo.hackclub.app/createSession", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    code: urlParams.get("code"),
+                    cityName: sessionStorage.getItem("refAuthCity")
+                })
+            });
+            if (!val.ok) {
+                try {
+                    let errPayload = await val.json();
+                    // This will print the actual error message sent from your backend!
+                    console.error("🔴 Backend Session Creation Error:", errPayload);
+                    
+                    liveshareError = errPayload.error || `Server responded with status ${val.status}`;
+                } catch (e) {
+                    liveshareError = `Server error: ${val.status}`;
+                }
+                let extractedCity = sessionStorage.getItem("refAuthCity");
+                if (urlParams.get("eventName") == null) {
+                    isValid = false;
+                }
+
+                if (extractedCity !== null) {
+                    let processed = proccessCity(extractedCity);
+                    
+                    let result = await checkCity(processed);
+
+                    console.log("Processed City:", processed);
+                    console.log("Is Valid Check (actual boolean):", result);
+
+                    isValid = result; 
+                    city = extractedCity;
+                }
+                
+            }
+            else {
+                let information = await val.json();
+
+                sessionStorage.setItem("liveshareKey", information.key);
+                sessionStorage.setItem("liveshareEmail", information.emailAddress);
+                sessionStorage.removeItem("authCode");
+                window.location.href = base + "/" + sessionStorage.getItem("refAuthCity") + "/control/?liveshare=true" 
+                return;
+            }
+        }
+        if (urlParams.get("error") != null) {
+            liveshareError = urlParams.get("error");
             return;
         }
         let extractedCity = urlParams.get('eventName');
@@ -59,7 +109,8 @@
         margin: 0;
     }
     div {
-        background-color: rgb(213, 213, 213);
+        background-color: rgb(214, 214, 214);
+        border: 6px solid grey;
         padding: 20px;
         margin: 20px;
         border-radius: 20px;
@@ -70,6 +121,9 @@
             margin-top: 10px;
             margin-bottom: 20px;
         }
+        button {
+            border-radius: 8px;
+        }
     }
 </style>
 <svelte:head>
@@ -78,7 +132,8 @@
 
 <h1>Welcome to {eventName} Jumbotron</h1>
 <h2>Organizer Landing Page</h2>
-<p style:margin-bottom=50px>Not an organizer? You can head to <a href="https://{eventName.toLowerCase()}.hackclub.com">{eventName.toLowerCase()}.hackclub.com</a> and find your city to get the appropriate Liveshare link!</p>
+<p style:margin-bottom=50px>Not an organizer? You can head to <a href="https://{eventName.toLowerCase()}.hackclub.com">{eventName.toLowerCase()}.hackclub.com</a> and find your event to get the appropriate Liveshare link!</p>
+{#if liveshareError == null}
 <div>
     <h3>Event Name</h3>
     {#if isValid == true}
@@ -93,11 +148,20 @@
     </form>
     {/if}
 </div>
-{#if isValid == true}
+{/if}
+{#if isValid == true || liveshareError != null}
 <div transition:slide>
+    {#if liveshareError == null}
     <h3>Login with Hack Club OAuth</h3>
+    <svg style="display: block; margin: 0 auto;" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414" xmlns="http://www.w3.org/2000/svg" aria-label="profile" viewBox="0 0 32 32" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="100" height="100"><path d="M25.698,22.196c0.248,-1.511 0.302,-3.475 0.302,-6.196c0,-2.721 -0.053,-4.685 -0.302,-6.196c-0.235,-1.45 -0.6,-2.127 -0.987,-2.515c-0.388,-0.387 -1.065,-0.752 -2.515,-0.987c-1.511,-0.249 -3.475,-0.302 -6.196,-0.302c-2.721,0 -4.685,0.053 -6.196,0.302c-1.45,0.235 -2.127,0.6 -2.515,0.987c-0.387,0.388 -0.752,1.065 -0.987,2.515c-0.249,1.511 -0.302,3.475 -0.302,6.196c0,2.721 0.053,4.685 0.302,6.196c0.235,1.45 0.6,2.127 0.987,2.515c0.388,0.387 1.065,0.752 2.515,0.987c1.511,0.249 3.475,0.302 6.196,0.302c2.721,0 4.685,-0.053 6.196,-0.302c1.45,-0.235 2.127,-0.6 2.515,-0.987c0.387,-0.388 0.752,-1.065 0.987,-2.515Zm-9.698,5.804c11,0 12,-1 12,-12c0,-11 -1,-12 -12,-12c-11,0 -12,1 -12,12c0,11 1,12 12,12Z"/><path d="M19,14c0,1.683 -0.271,2.241 -0.469,2.456c-0.163,0.176 -0.68,0.544 -2.531,0.544c-1.85,0 -2.367,-0.368 -2.53,-0.544c-0.198,-0.215 -0.47,-0.773 -0.47,-2.456c0,-1.657 1.343,-3 3,-3c1.657,0 3,1.343 3,3Zm0.835,3.977c0.879,-0.804 1.165,-2.104 1.165,-3.977c0,-2.761 -2.238,-5 -5,-5c-2.761,0 -5,2.239 -5,5c0,1.873 0.287,3.173 1.166,3.977c-1.665,0.911 -2.97,2.396 -3.649,4.189c-0.124,0.328 -0.154,0.708 0.051,0.993c0.569,0.789 1.674,-0.111 2.13,-0.97c1.008,-1.897 3.004,-3.189 5.302,-3.189c2.298,0 4.295,1.292 5.303,3.189c0.456,0.859 1.561,1.759 2.129,0.97c0.205,-0.285 0.176,-0.665 0.052,-0.993c-0.68,-1.793 -1.985,-3.278 -3.649,-4.189Z"/></svg>
     <p>Logging in is optional; however, Liveshare functionality for your event will not work</p>
-    <p><button onclick={() => {sessionStorage.setItem("refAuthCity", city); window.location.href = "https://auth.hackclub.com/oauth/authorize?client_id=e86d4d7eec9c546e6c4700388d4fea7f&redirect_uri=https%3A%2F%2Fcurly-bassoon-6vrjgqpjpjjhwj6-5173.app.github.dev%2Fjumbotron%2F&response_type=code&scope=verification_status+slack_id"}}>Log in</button></p>
+    <p><button onclick={() => {sessionStorage.setItem("refAuthCity", proccessCity(city)); window.location.href = "https://auth.hackclub.com/oauth/authorize?client_id=e86d4d7eec9c546e6c4700388d4fea7f&redirect_uri=https%3A%2F%2Fcurly-bassoon-6vrjgqpjpjjhwj6-5173.app.github.dev%2Fjumbotron%2F&response_type=code&scope=email+verification_status"}}>Log in</button></p>
     <p><a href="{base}/{city}/control/" style:color="black">Continue without OAuth</a></p>
+    {:else}
+    <h3>Continue without Liveshare</h3>
+    <h4>Liveshare has had the following issue. You can continue without logging in</h4>
+    <p>{liveshareError}</p>
+    <p><a href="{base}/{cityToLink(city)}/control/" style:color="black">Continue without OAuth</a></p>
+    {/if}
 </div>
 {/if}

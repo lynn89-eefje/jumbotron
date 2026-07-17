@@ -19,29 +19,20 @@
     })
 
     function sendDisconnectBeacon() {
-        // 1. Removed the 'openGate' check. 
-        // If the tab is closing, we force the 'active: false' status regardless of local UI state.
-        
         const url = "https://jumbotron.lynn89sudo.hackclub.app/mutate";
         
-        // 2. Be extremely explicit with the payload structure
-        const payload = JSON.stringify({
-            auth: {
-                emailAddress: sessionStorage.getItem("liveshareEmail"), 
-                key: sessionStorage.getItem("liveshareKey")
-            },
-            cityName: cityName, 
-            data: { 
-                active: false    
-            }
-        });
+        // Convert your structured data into standard URL-encoded form properties
+        const params = new URLSearchParams();
+        params.append("auth", JSON.stringify({
+            emailAddress: sessionStorage.getItem("liveshareEmail"), 
+            key: sessionStorage.getItem("liveshareKey")
+        }));
+        params.append("cityName", cityName);
+        params.append("data", JSON.stringify({ active: false }));
         
-        const blob = new Blob([payload], { type: "application/json" });
-        
-        // 3. sendBeacon returns a boolean. If it returns false, 
-        // the browser failed to queue the request.
-        const success = navigator.sendBeacon(url, blob);
-        console.log("Beacon queued:", success); 
+        // This sends as application/x-www-form-urlencoded naturally, bypassing preflights
+        const success = navigator.sendBeacon(url, params);
+        console.log("Beacon queued via URLSearchParams:", success); 
     }
 
     function enableLive() {

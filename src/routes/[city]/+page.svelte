@@ -37,7 +37,7 @@
             boxes = parsed;
             console.log("Stream updated", boxes);
             if (boxes.active === false) {
-                p2 = "Liveshare is no longer enabled for this event; it is available, and can be enabled by an organizer. You can keep this page open while you wait.";
+                p2 = "Liveshare is no longer enabled for this event; it is available, and can be enabled by an organizer. It is recommended to reload this page once Liveshare is re-enabled.";
                 boxes = {};
             }
             else {

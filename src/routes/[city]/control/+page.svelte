@@ -103,6 +103,7 @@
         margin: 20px;
         background-color: rgb(231, 231, 231);
         padding: 20px;
+        padding-top: 30px;
         border-radius: 30px;
         border: 5px grey solid;
         h3 {

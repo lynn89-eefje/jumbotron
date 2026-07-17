@@ -268,12 +268,12 @@
     }
 
     onMount(async () => {
-        let ip = await fetch("https://api.ipify.org/?format=json");
-        let ipReadable = await ip.json();
-        let raw = await fetch(`https://ip.hackclub.com/ip/${ipReadable.ip}`);
-        let details = await raw.json();
-        if (details.country_name == "United States" || details.country_name == "Canada" || details.country_name == "Australia" || details.country_name == "New Zealand") {
-            formatLabel = "International"; // Inversed
+        const is24Hour = !new Intl.DateTimeFormat(undefined, { hour: 'numeric' })
+        .resolvedOptions()
+        .hourCycle.startsWith('h1');
+
+        if (!is24Hour) {
+            switchFormat();
         }
     })
     

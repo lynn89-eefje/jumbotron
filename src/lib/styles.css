@@ -4,6 +4,9 @@ h1, h2, h3 {
     margin-left: 10px;
     margin-right: 10px;
 }
+h2 {
+  font-family: Atkinson Hyperlegible Mono, Montserrat, Segoe UI, Tahoma, Geneva, Futura, Calibri;
+}
 h4, h5, h6, p, output {
     font-family: Poppins, Montserrat, Segoe UI, Tahoma, Geneva, Futura, Calibri;
     text-align: center;

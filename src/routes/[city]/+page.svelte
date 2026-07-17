@@ -67,11 +67,11 @@
 
 </script>
 <style>
-    @media screen and (min-width: 900px) {
-        p {
-            margin-left: 60px;
-            margin-right: 60px;
-        }
+P {
+    margin: 10px;
+}
+    p, h1, h2, h3, output {
+        text-align: start;
     }
     .box {
         background-color: lightgrey;
@@ -85,7 +85,7 @@
 <svelte:head>
     <title>{eventName} Liveshare</title>
 </svelte:head>
-<h1><span style:font-size=25px style:font-weight=800>Welcome to</span> <br><span>{eventName} {proccessCity(page.params.city)}</span></h1>
+<h1><span style:font-weight=800>Welcome to</span> <span>{eventName} {proccessCity(page.params.city)}</span></h1>
 <h2 style:font-family="Atkinson Hyperlegible Mono, Monserrat" style:font-size=20px>Liveshare Portal</h2>
 <div aria-live="polite" aria-atomic="true">
     <p><output>{p2}</output></p>

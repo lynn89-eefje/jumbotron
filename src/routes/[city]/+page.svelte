@@ -67,18 +67,17 @@
 
 </script>
 <style>
-P {
-    margin: 10px;
-}
-    p, h1, h2, h3, output {
+    p, h1, h2, h3 {
         text-align: start;
+        margin-left: 25px;
+        margin-right: 25px;
     }
     .box {
         background-color: lightgrey;
         padding: 10px;
         border-radius: 20px;
         border: darkgrey solid 5px;
-        margin: 50px;
+        margin: 25px;
         padding-top: 20px;
     }
 </style>
@@ -104,8 +103,8 @@ P {
     {/if}
     {#if boxes.event}
     <div class="box" transition:blur>
-        <h3><output>Event at {boxes.event.time}</output></h3>
-        <p style:margin-top=20px><output>{boxes.event.title}</output></p>
+        <h3><output>Event: {boxes.event.title}</output></h3>
+        <p style:margin-top=20px><output>This takes place at {boxes.event.time}</output></p>
     </div>
     {/if}
 </div>
